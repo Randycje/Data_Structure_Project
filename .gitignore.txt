@@ -1,0 +1,16 @@
+# Ignore Visual Studio files
+.vs/
+*.vsidx
+
+# Ignore OS files
+*.DS_Store  # macOS
+Thumbs.db   # Windows
+
+# Ignore logs, temp files, and binaries
+*.log
+*.tmp
+*.exe
+
+# Ignore build directories
+/build/
+/dist/
