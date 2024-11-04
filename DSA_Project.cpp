@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>
 #include "json.hpp" // Include this header for JSON handling
 
 #pragma comment(lib, "wldap32.lib")
@@ -11,32 +13,20 @@
 #define CURL_STATICLIB 
 #include <curl/curl.h>
 
-// Define a node structure for single linked list
-struct Node {
-    nlohmann::json data;
-    Node* next;
+struct HousingRecord {
+    std::string month;
+    std::string town;
+    std::string flatType;
+    std::string block;
+    std::string streetName;
+    std::string storeyRange;
+    int floorAreaSqm;
 
-    Node(nlohmann::json val) : data(val), next(nullptr) {}
+    HousingRecord(const std::string& m, const std::string& t, const std::string& f, const std::string& b,
+        const std::string& s, const std::string& sr, const std::string& fa)
+        : month(m), town(t), flatType(f), block(b), streetName(s), storeyRange(sr), floorAreaSqm(stoi(fa)) {}
 };
 
-// Function to append a new node at the end of the list
-void append(Node** head, nlohmann::json value) {
-    Node* new_node = new Node(value);
-    Node* last = *head;
-
-    if (*head == nullptr) {
-        *head = new_node;
-        return;
-    }
-
-    while (last->next != nullptr) {
-        last = last->next;
-    }
-
-    last->next = new_node;
-}
-
-// This callback function gets called by libcurl as soon as there is data received that needs to be saved.
 static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* data) {
     size_t newLength = size * nmemb;
     data->append((char*)contents, newLength);
@@ -59,20 +49,25 @@ int main() {
         res = curl_easy_perform(curl);
 
         if (res == CURLE_OK) {
-            std::cout << "Data retrieved successfully." << std::endl;
-            Node* head = nullptr;
+            std::vector<HousingRecord> records;
 
             try {
                 auto json = nlohmann::json::parse(readBuffer);
-                for (auto& item : json["result"]["records"]) {
-                    append(&head, item);
+                for (const auto& item : json["result"]["records"]) {
+                    records.emplace_back(
+                        item.value("month", ""),
+                        item.value("town", ""),
+                        item.value("flat_type", ""),
+                        item.value("block", ""),
+                        item.value("street_name", ""),
+                        item.value("storey_range", ""),
+                        item.value("floor_area_sqm", "0") // Assuming floor_area_sqm might be string
+                    );
                 }
 
-                // Printing all the items in the linked list
-                Node* temp = head;
-                while (temp != nullptr) {
-                    std::cout << "Record: " << temp->data.dump() << std::endl;
-                    temp = temp->next;
+                for (const auto& rec : records) {
+                    std::cout << rec.month << ", " << rec.town << ", " << rec.flatType << ", " << rec.block
+                        << ", " << rec.streetName << ", " << rec.storeyRange << ", " << rec.floorAreaSqm << " sqm" << std::endl;
                 }
             }
             catch (std::exception& e) {
