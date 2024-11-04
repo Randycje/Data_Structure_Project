@@ -1,0 +1,9 @@
+﻿  DSA_Project.cpp
+DSA_Project.obj : error LNK2001: unresolved external symbol __imp__curl_easy_perform
+DSA_Project.obj : error LNK2001: unresolved external symbol __imp__curl_global_init
+DSA_Project.obj : error LNK2001: unresolved external symbol __imp__curl_global_cleanup
+DSA_Project.obj : error LNK2001: unresolved external symbol __imp__curl_easy_init
+DSA_Project.obj : error LNK2001: unresolved external symbol __imp__curl_easy_strerror
+DSA_Project.obj : error LNK2001: unresolved external symbol __imp__curl_easy_cleanup
+DSA_Project.obj : error LNK2001: unresolved external symbol __imp__curl_easy_setopt
+C:\Users\music\Desktop\School\Y2TRI1\Data Structure\DSA_Project\DSA_Project\Release\DSA_Project.exe : fatal error LNK1120: 7 unresolved externals
