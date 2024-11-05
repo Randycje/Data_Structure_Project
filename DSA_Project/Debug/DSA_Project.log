@@ -1,7 +1,2 @@
-﻿DSA_Project.obj : error LNK2019: unresolved external symbol __imp__curl_global_init referenced in function _main
-DSA_Project.obj : error LNK2019: unresolved external symbol __imp__curl_global_cleanup referenced in function _main
-DSA_Project.obj : error LNK2019: unresolved external symbol __imp__curl_easy_init referenced in function _main
-DSA_Project.obj : error LNK2019: unresolved external symbol __imp__curl_easy_setopt referenced in function _main
-DSA_Project.obj : error LNK2019: unresolved external symbol __imp__curl_easy_perform referenced in function _main
-DSA_Project.obj : error LNK2019: unresolved external symbol __imp__curl_easy_cleanup referenced in function _main
-C:\Users\music\Desktop\School\Y2TRI1\Data Structure\DSA_Project\DSA_Project\Debug\DSA_Project.exe : fatal error LNK1120: 6 unresolved externals
+﻿  DSA_Project.cpp
+  DSA_Project.vcxproj -> C:\Users\music\Desktop\Data_Structure_Project-working-for-me\Debug\DSA_Project.exe
