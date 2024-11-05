@@ -13,9 +13,36 @@
 #pragma comment(lib, "advapi32.lib")
 
 #include "DSA_Project.h"
-#include "Sort.cpp"
+#include "Sort.h"
 
+static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* data) {
+    size_t newLength = size * nmemb;
+    data->append((char*)contents, newLength);
+    return newLength;
+}
 
+void fetch_data(const std::string& full_url, HousingList& records) {
+    CURL* curl = curl_easy_init();
+    if (curl) {
+        std::string readBuffer;
+        curl_easy_setopt(curl, CURLOPT_URL, full_url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        CURLcode res = curl_easy_perform(curl);
+
+        if (res == CURLE_OK) {
+            auto json = nlohmann::json::parse(readBuffer);
+            for (const auto& item : json["result"]["records"]) {
+                records.append(HousingRecord(item));
+            }
+        }
+        else {
+            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        }
+
+        curl_easy_cleanup(curl);
+    }
+}
 
 int main() {
     HousingList records;
@@ -34,11 +61,16 @@ int main() {
         std::cin >> action;
 
         if (action == 1) {
-            HousingList sortedRecords = SortFunction::sortRecords(records);
-            sortedRecords.display();
+            std::cout << "Select the column to sort by:\n";
+            std::cout << "1. Month\n2. Town\n3. Flat Type\n4. Block\n5. Street Name\n6. Storey Range\n7. Floor Area (sqm)\n8. Flat Model\n9. Lease Commencement Date\n10. Remaining Lease\n11. Resale Price\n";
+            std::cout << "Enter the number of the column to sort by (1-11): ";
+            int choice;
+            std::cin >> choice;
+            records = SortFunction::sortRecords(records, choice);
+            records.display();
         }
 
-        else if (action == 2) {
+/*        else if (action == 2) {
             HousingList filteredRecords = filterRecord(records);
             filteredRecords.display();
         }
@@ -46,9 +78,10 @@ int main() {
         else if (action == 3) {
             HousingList searchedRecords = searchRecord(records);
             searchedRecords.display();
+        }
+ */ 
     }
-}
-
+    
 
     std::cout << "Select a column:\n1. Month\n2. Town\n3. Flat Type\n4. Block\n";
     std::cout << "5. Street Name\n6. Storey Range\n7. Floor Area\n";
