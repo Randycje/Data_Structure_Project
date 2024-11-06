@@ -1,10 +1,14 @@
 #ifndef PLOTGRAPH_H
 #define PLOTGRAPH_H
 
+#include <Python.h>
 #include <iostream>
 #include <vector>
 #include <string>
+#define _CRT_SECURE_NO_WARNINGS
 #include <matplotlibcpp.h>
+#include <Python.h>
+#include <numpy/arrayobject.h>
 
 namespace plt = matplotlibcpp;
 

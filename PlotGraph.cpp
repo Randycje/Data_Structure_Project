@@ -11,9 +11,8 @@ void GraphPlotter::displayColumns(const std::vector<std::vector<std::string>>& c
 }
 
 // Function to plot the graph
-void GraphPlotter::plotGraph(const std::vector<std::vector<std::string>>& data,
-    const std::vector<std::vector<std::string>>& columns,
-    int xCol, int yCol, int plotType) const {
+void GraphPlotter::plotGraph(const std::vector<std::vector<std::string>>& data, const std::vector<std::vector<std::string>>& columns, int xCol, int yCol, int plotType) const
+{
     std::vector<double> xData;
     std::vector<double> yData;
 
@@ -23,24 +22,30 @@ void GraphPlotter::plotGraph(const std::vector<std::vector<std::string>>& data,
         yData.push_back(std::stod(record[yCol]));
     }
 
+    char title[100];
+    std::sprintf(title, "Plot of %s vs %s", columns[0][xCol].c_str(), columns[0][yCol].c_str());
+
     // Plot the graph based on the selected plot type
     if (plotType == 1) {
         // Line Plot
         plt::plot(xData, yData, "r-");  // Red line
+        plt::title(title);
     }
     else if (plotType == 2) {
         // Scatter Plot
         plt::scatter(xData, yData, 10.0);  // Point size of 10
+        plt::title(title);
     }
     else if (plotType == 3) {
         // Bar Plot
         plt::bar(xData, yData);
-    }
+        plt::title(title);
 
-    // Set labels for axes
-   /* plt::xlabel(columns[0][xCol]);
-    plt::ylabel(columns[0][yCol]);
-    plt::show();*/
+        // Set labels for axes
+        plt::xlabel(columns[0][xCol]);
+        plt::ylabel(columns[0][yCol]);
+        plt::show();
+    }
 }
 
 // Function to get the user's input for columns and plot type
