@@ -72,7 +72,7 @@ public:
     HousingList() : head(nullptr) {}
 
     ~HousingList() {
-       // clear();
+       clear();
     }
 
     void append(const HousingRecord& rec) {
@@ -131,13 +131,13 @@ public:
 
     void clear() {
         while (head != nullptr) {
-            std::cout << "Deleting node with address " << head << std::endl;
             ListNode* temp = head;
             head = head->next;
-            delete temp;
-            std::cout << "Deleted successfully. New head is " << head << std::endl;
+            temp = nullptr;  // Safeguard against dangling pointers
         }
     }
+
+
 
     //void printList(const char* label, ListNode* head) {
     //    std::cout << label << ": ";
