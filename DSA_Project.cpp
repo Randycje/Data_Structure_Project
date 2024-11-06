@@ -4,7 +4,8 @@
 
 #include "DSA_Project.h"
 #include "Sort.h"
-#include "Search.cpp"
+#include "Search.h"
+#include "WriteTOCSV.cpp"
 
 
 int main() {
@@ -78,11 +79,10 @@ int main() {
 
             if (choice == 1) {
                 std::cout << "Saving...\n";
-                //HousingList filteredRecords = filterRecord(records);
-                //filteredRecords.display();
+                WriteToCSV::writeListToCSV(records, "ResaleData.csv");
             }
             else if (choice == 2)  {
-
+                std::cout << "No actions done!";
             }
         }
 
@@ -94,16 +94,5 @@ int main() {
         }
     }
     
-
-    //std::cout << "Select a column:\n1. Month\n2. Town\n3. Flat Type\n4. Block\n";
-    //std::cout << "5. Street Name\n6. Storey Range\n7. Floor Area\n";
-    //std::cout << "8. Flat Model\n9. Lease Commence Date\n10. Remaining Lease\n11. Resale Price\n";
-    //std::cout << "Enter your choice (1-11): ";
-    //int column;
-    //std::cin >> column;
-
-    //records.display_column(column);
-    // This part could now include logic to handle sorting, filtering, or searching based on the user's choice
-
     return 0;
 }

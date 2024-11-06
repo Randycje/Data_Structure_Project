@@ -79,11 +79,39 @@ public:
     void display() const {
         ListNode* current = head;
         int count = 0;
+
+        // Display the header line
+        std::cout << std::setw(10) << "Month" << " | "
+            << std::setw(12) << "Town" << " | "
+            << std::setw(18) << "FlatType" << " | "
+            << std::setw(6) << "Block" << " | "
+            << std::setw(20) << "StreetName" << " | "
+            << std::setw(15) << "StoreyRange" << " | "
+            << std::setw(14) << "FloorAreaSqm" << " | "
+            << std::setw(15) << "FlatModel" << " | "
+            << std::setw(12) << "LeaseCommenceDate" << " | "
+            << std::setw(20) << "RemainingLease" << " | "
+            << std::setw(16) << "ResalePrice" << std::endl;
+
+        // Print a separator line to distinguish the headers from the data
+        std::cout << std::setw(10) << "----------" << " | "
+            << std::setw(12) << "----------" << " | "
+            << std::setw(18) << "----------" << " | "
+            << std::setw(6) << "-----" << " | "
+            << std::setw(20) << "------------" << " | "
+            << std::setw(15) << "------------" << " | "
+            << std::setw(14) << "------------" << " | "
+            << std::setw(15) << "----------" << " | "
+            << std::setw(12) << "----------------" << " | "
+            << std::setw(20) << "--------------" << " | "
+            << std::setw(16) << "----------" << std::endl;
+
+        // Display the data for the first 6 records
         while (current != nullptr && count++ < 6) {
             const auto& rec = current->data;
             std::cout << std::setw(10) << rec.month << " | "
                 << std::setw(12) << rec.town << " | "
-                << std::setw(15) << rec.flatType << " | "
+                << std::setw(18) << rec.flatType << " | "
                 << std::setw(6) << rec.block << " | "
                 << std::setw(20) << rec.streetName << " | "
                 << std::setw(15) << rec.storeyRange << " | "

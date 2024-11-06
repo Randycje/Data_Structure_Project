@@ -144,11 +144,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DSA_Project.cpp" />
+    <ClCompile Include="PlotGraph.cpp" />
     <ClCompile Include="Search.cpp" />
     <ClCompile Include="Sort.cpp" />
+    <ClCompile Include="writeToCSV.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DSA_Project.h" />
+    <ClInclude Include="PlotGraph.h" />
     <ClInclude Include="Search.h" />
     <ClInclude Include="Sort.h" />
   </ItemGroup>
