@@ -67,7 +67,7 @@ int main() {
             int choice;
             std::cin >> choice;
             records = SortFunction::sortRecords(records, choice);
-            records.display();
+           // records.display();
         }
 
 /*        else if (action == 2) {

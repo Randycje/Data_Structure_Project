@@ -7,7 +7,6 @@
 HousingList SortFunction::sortRecords(HousingList& housingList, int choice) {
     // Create a copy of the original list to sort
     HousingList sortedList = housingList; // Make a copy to preserve original list
-    std::vector<HousingRecord> records;
 
     // Sorting based on user choice
     switch (choice) {
@@ -72,12 +71,6 @@ HousingList SortFunction::sortRecords(HousingList& housingList, int choice) {
         return housingList; // Return the original list if choice is invalid
     }
 
-    // Clear the original list and re-populate it with sorted records
-    housingList.clear();
-    for (const auto& record : records) {
-        housingList.append(record);
-    }
-
     std::cout << "Records sorted successfully!\n";
-    return housingList; // Return the sorted list
+    return sortedList; // Return the sorted list
 }

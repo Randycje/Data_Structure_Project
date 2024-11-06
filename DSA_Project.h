@@ -72,7 +72,7 @@ public:
     HousingList() : head(nullptr) {}
 
     ~HousingList() {
-        clear();
+       // clear();
     }
 
     void append(const HousingRecord& rec) {
@@ -131,46 +131,57 @@ public:
 
     void clear() {
         while (head != nullptr) {
+            std::cout << "Deleting node with address " << head << std::endl;
             ListNode* temp = head;
             head = head->next;
             delete temp;
+            std::cout << "Deleted successfully. New head is " << head << std::endl;
         }
     }
 
-    // Merge sort function
+    //void printList(const char* label, ListNode* head) {
+    //    std::cout << label << ": ";
+    //    ListNode* temp = head;
+    //    while (temp != nullptr) {
+    //        std::cout << temp->data.block << "->"; // Adjust according to your data structure
+    //        temp = temp->next;
+    //    }
+    //}
+
     ListNode* mergeSort(ListNode* head, std::function<bool(const HousingRecord&, const HousingRecord&)> compare) {
         if (!head || !head->next) {
             return head; // Base case: if the list is empty or has one node
         }
 
-        // Split the list into two halves
         ListNode* mid = getMiddle(head);
+
         ListNode* leftHalf = head;
         ListNode* rightHalf = mid->next;
-        mid->next = nullptr; // Split the list into two parts
+        mid->next = nullptr; // Detach the right half from the left half
 
-        // Recursively sort the two halves
+
         leftHalf = mergeSort(leftHalf, compare);
         rightHalf = mergeSort(rightHalf, compare);
 
-        // Merge the sorted halves
-        return merge(leftHalf, rightHalf, compare);
+
+        ListNode* sorted = merge(leftHalf, rightHalf, compare);
+        return sorted;
     }
 
-private:
-    // Function to find the middle node of the linked list
     ListNode* getMiddle(ListNode* head) {
-        if (!head) return nullptr;
+        if (!head) return nullptr;  // Early exit if the list is empty.
         ListNode* slow = head;
-        ListNode* fast = head->next;
+        ListNode* fast = head->next;  // Start fast one node ahead.
 
+        // Move fast at twice the speed of slow to find the middle node.
         while (fast && fast->next) {
             slow = slow->next;
             fast = fast->next->next;
         }
 
-        return slow;
+        return slow;  // Slow will be at the middle when fast reaches the end.
     }
+
 
     // Merge two sorted linked lists
     ListNode* merge(ListNode* left, ListNode* right, std::function<bool(const HousingRecord&, const HousingRecord&)> compare) {
