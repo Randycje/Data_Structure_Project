@@ -7,8 +7,8 @@ class WriteToCSV {
 public:
     // Public method to write the HousingList data to a CSV file
     static void writeListToCSV(const HousingList& housingList, const std::string& filename) {
-        // Open a file for writing
-        std::ofstream file(filename);
+        // Open the file for writing, overwriting if it exists
+        std::ofstream file(filename, std::ios::out | std::ios::trunc);  // Ensure file is overwritten
 
         // Check if the file is open
         if (!file.is_open()) {

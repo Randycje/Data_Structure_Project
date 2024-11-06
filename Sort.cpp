@@ -73,7 +73,5 @@ HousingList SortFunction::sortRecords(HousingList& housingList, int choice) {
         std::cout << "Invalid choice. Please select a number between 1 and 11." << std::endl;
         return housingList; // Return the original list if choice is invalid
     }
-
-    std::cout << "Records sorted successfully!\n";
     return sortedList; // Return the sorted list
 }

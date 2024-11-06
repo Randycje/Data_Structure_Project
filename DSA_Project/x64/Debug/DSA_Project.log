@@ -1,17 +1,8 @@
-﻿  PlotGraph.cpp
-C:\Windows\vcpkg\installed\x64-windows\include\matplotlibcpp.h(171,9): error C4996: 'Py_SetProgramName': deprecated in 3.11
-  (compiling source file 'PlotGraph.cpp')
-  
-C:\Windows\vcpkg\installed\x64-windows\include\matplotlibcpp.h(177,9): error C4996: 'PySys_SetArgv': deprecated in 3.11
-  (compiling source file 'PlotGraph.cpp')
-  
-C:\Windows\vcpkg\installed\x64-windows\include\matplotlibcpp.h(340,20): error C2766: explicit specialization; 'matplotlibcpp::detail::select_npy_type<int64_t>' has already been defined
-  (compiling source file 'PlotGraph.cpp')
-      C:\Windows\vcpkg\installed\x64-windows\include\matplotlibcpp.h(331,20):
-      see previous definition of 'matplotlibcpp::detail::select_npy_type<int64_t>'
-  
-C:\Windows\vcpkg\installed\x64-windows\include\matplotlibcpp.h(342,20): error C2766: explicit specialization; 'matplotlibcpp::detail::select_npy_type<uint64_t>' has already been defined
-  (compiling source file 'PlotGraph.cpp')
-      C:\Windows\vcpkg\installed\x64-windows\include\matplotlibcpp.h(335,20):
-      see previous definition of 'matplotlibcpp::detail::select_npy_type<uint64_t>'
-  
+﻿  DSA_Project.cpp
+  Search.cpp
+  Sort.cpp
+  writeToCSV.cpp
+  Generating Code...
+  DSA_Project.vcxproj -> C:\Users\User\Desktop\code\DSA\x64\Debug\DSA_Project.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
