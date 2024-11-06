@@ -4,13 +4,13 @@
 
 #include "DSA_Project.h"
 #include "Sort.h"
+#include "Search.cpp"
+
 
 int main() {
     HousingList records;
-    std::string base_url = "https://data.gov.sg";
-    std::string initial_url = "/api/action/datastore_search?resource_id=d_8b84c4ee58e3cfc0ece0d773c8ca6abc&limit=100";
-    std::string full_url = base_url + initial_url;
-    fetch_data(full_url, records);
+    std::string filename = "Dataset.csv";
+    records.readCSV(filename);
 
     int action = 1;
 
@@ -22,32 +22,52 @@ int main() {
         std::cin >> action;
 
         if (action == 1) {
+            std::cout << "\n";
             std::cout << "Select the column to sort by:\n";
             std::cout << "1. Month\n2. Town\n3. Flat Type\n4. Block\n5. Street Name\n6. Storey Range\n7. Floor Area (sqm)\n8. Flat Model\n9. Lease Commencement Date\n10. Remaining Lease\n11. Resale Price\n";
             std::cout << "Enter the number of the column to sort by (1-11): ";
             int choice;
             std::cin >> choice;
+            std::cout << "\n";
             records = SortFunction::sortRecords(records, choice);
         }
 
         else if (action == 2) {
+            std::cout << "\n";
             std::cout << "Select the column you want to filter out:\n";
             std::cout << "1. Month\n2. Town\n3. Flat Type\n4. Block\n5. Street Name\n6. Storey Range\n7. Floor Area (sqm)\n8. Flat Model\n9. Lease Commencement Date\n10. Remaining Lease\n11. Resale Price\n";
             std::cout << "Enter the number of the column to sort by (1-11): ";
             int choice;
             std::cin >> choice;
+            std::cout << "\n";
             //HousingList filteredRecords = filterRecord(records);
             //filteredRecords.display();
         }
 
         else if (action == 3) {
+            std::cout << "\n";
             std::cout << "Select the column you want to search by:\n";
-            std::cout << "1. Month\n2. Town\n3. Flat Type\n4. Block\n5. Street Name\n6. Storey Range\n7. Floor Area (sqm)\n8. Flat Model\n9. Lease Commencement Date\n10. Remaining Lease\n11. Resale Price\n";
-            std::cout << "Enter the number of the column to sort by (1-11): ";
+            std::cout << "1. Month\n2. Town\n3. Flat Type\n8. Flat Model\n10. Remaining Lease\n11. Resale Price\n";
+            std::cout << "Enter the number of the column to search froms: \n";
             int choice;
             std::cin >> choice;
-            //HousingList searchedRecords = searchRecord(records);
-            //searchedRecords.display();
+            std::cout << "\n";
+            std::cout << "Enter the keyword to search (case insensitive): ";
+            std::string input;
+            std::cin >> input;
+            std::cout << "\n";
+            HousingList searchedRecords = SearchFunction::searchRecords(records, choice, input); // goes into infinite loop if cannot match input please fix
+
+            searchedRecords.display();
+            
+            std::cout << "\nKeep new table? (yes or no)";
+            std::string keep;
+            std::cin >> keep;
+
+            if (keep == "yes") {
+                records = searchedRecords;
+            }
+            std::cout << "\n";
         }
 
         else if (action == 4) {

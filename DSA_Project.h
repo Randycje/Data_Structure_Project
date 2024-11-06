@@ -2,9 +2,11 @@
 #define DSA_PROJECT_H
 
 #include <iostream>
-#include <string>
+#include <fstream>
+#include <sstream>
 #include <iomanip>
-#include "json.hpp" // Include this header for JSON handling (https://github.com/nlohmann/json)
+#include <string>
+#include <functional>
 
 struct HousingRecord {
     std::string month;
@@ -45,10 +47,10 @@ struct ListNode {
 };
 
 struct TreeNode {
-    int value;
+    HousingRecord data;
     TreeNode* left;
     TreeNode* right;
-    TreeNode(int val) : value(val), left(nullptr), right(nullptr) {}
+    TreeNode(const HousingRecord& rec) : data(rec), left(nullptr), right(nullptr) {}
 };
 
 class HousingList {
@@ -58,7 +60,7 @@ public:
     HousingList() : head(nullptr) {}
 
     ~HousingList() {
-       clear();
+        clear();
     }
 
     void append(const HousingRecord& rec) {
@@ -76,18 +78,19 @@ public:
 
     void display() const {
         ListNode* current = head;
-        while (current != nullptr) {
+        int count = 0;
+        while (current != nullptr && count++ < 6) {
             const auto& rec = current->data;
-            std::cout << std::setw(10) << rec.month
-                << std::setw(12) << rec.town
-                << std::setw(15) << rec.flatType
-                << std::setw(6) << rec.block
-                << std::setw(20) << rec.streetName
-                << std::setw(15) << rec.storeyRange
-                << std::setw(14) << rec.floorAreaSqm
-                << std::setw(15) << rec.flatModel
-                << std::setw(12) << rec.leaseCommenceDate
-                << std::setw(20) << rec.remainingLease
+            std::cout << std::setw(10) << rec.month << " | "
+                << std::setw(12) << rec.town << " | "
+                << std::setw(15) << rec.flatType << " | "
+                << std::setw(6) << rec.block << " | "
+                << std::setw(20) << rec.streetName << " | "
+                << std::setw(15) << rec.storeyRange << " | "
+                << std::setw(14) << rec.floorAreaSqm << " | "
+                << std::setw(15) << rec.flatModel << " | "
+                << std::setw(12) << rec.leaseCommenceDate << " | "
+                << std::setw(20) << rec.remainingLease << " | "
                 << std::setw(16) << rec.resalePrice << std::endl;
             current = current->next;
         }
@@ -100,6 +103,13 @@ public:
             temp = nullptr;  // Safeguard against dangling pointers
         }
     }
+
+    void readCSV(const std::string& filename) {
+        std::ifstream file(filename);
+        if (!file.is_open()) {
+            std::cerr << "Error: Could not open file " << filename << std::endl;
+            return;
+        }
 
         std::string line;
         std::getline(file, line); // Skip header
@@ -135,7 +145,7 @@ public:
             return head; // Base case: if the list is empty or has one node
         }
 
-        ListNode* mid = getMiddle(head);
+        ListNode* mid = getMiddleMerge(head);
 
         ListNode* leftHalf = head;
         ListNode* rightHalf = mid->next;
@@ -150,7 +160,7 @@ public:
         return sorted;
     }
 
-    ListNode* getMiddle(ListNode* head) {
+    ListNode* getMiddleMerge(ListNode* head) { //THIS WORKS DONT TOUCH
         if (!head) return nullptr;  // Early exit if the list is empty.
         ListNode* slow = head;
         ListNode* fast = head->next;  // Start fast one node ahead.
@@ -159,6 +169,24 @@ public:
         while (fast && fast->next) {
             slow = slow->next;
             fast = fast->next->next;
+        }
+
+        return slow;  // Slow will be at the middle when fast reaches the end.
+    }
+
+    ListNode* getMiddle(ListNode* head, ListNode* end) {
+        if (!head) return nullptr;  // Early exit if the list is empty.
+
+        ListNode* slow = head;
+        ListNode* fast = head->next;
+
+        // Move fast at twice the speed of slow to find the middle node.
+        while (fast != end && fast->next != end) {
+            slow = slow->next;
+            fast = fast->next;
+            if (fast != nullptr) {
+                fast = fast->next;
+            }
         }
 
         return slow;  // Slow will be at the middle when fast reaches the end.
@@ -193,6 +221,26 @@ public:
         }
 
         return dummy.next; // Return the merged list, skipping the dummy node
+    }
+
+    // Recursive function to convert sorted linked list to balanced BST
+    TreeNode* sortedListToBST(ListNode* start, ListNode* end = nullptr) {
+        // Base case: when start is equal to end or start is nullptr, no tree to build
+        if (start == nullptr || start == end) {
+            return nullptr;
+        }
+
+        // Find the middle node
+        ListNode* mid = getMiddle(start, end);  // This should properly split the list
+
+        // Create a new TreeNode with the middle node's data
+        TreeNode* root = new TreeNode(mid->data);
+
+        // Recursively build left and right subtrees
+        root->left = sortedListToBST(start, mid);  // Left subtree (elements before mid)
+        root->right = sortedListToBST(mid->next, end);  // Right subtree (elements after mid)
+
+        return root;
     }
 };
 #endif

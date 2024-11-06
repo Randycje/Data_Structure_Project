@@ -1,8 +1,11 @@
 #include "Sort.h"
+#include "DSA_Project.h"
 #include <vector>
 #include <algorithm>
 #include <iostream>
-
+#include <iomanip>
+#include <string>
+#include <functional>
 
 HousingList SortFunction::sortRecords(HousingList& housingList, int choice) {
     // Create a copy of the original list to sort
