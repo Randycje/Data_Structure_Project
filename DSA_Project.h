@@ -19,19 +19,6 @@ struct HousingRecord {
     std::string remainingLease;
     int resalePrice;
 
-    HousingRecord(const nlohmann::json& item)
-        : month(item.value("month", "")),
-        town(item.value("town", "")),
-        flatType(item.value("flat_type", "")),
-        block(item.value("block", "")),
-        streetName(item.value("street_name", "")),
-        storeyRange(item.value("storey_range", "")),
-        floorAreaSqm(safe_parse_int(item.value("floor_area_sqm", "0"))),
-        flatModel(item.value("flat_model", "")),
-        leaseCommenceDate(safe_parse_int(item.value("lease_commence_date", "0"))),
-        remainingLease(item.value("remaining_lease", "")),
-        resalePrice(safe_parse_int(item.value("resale_price", "0"))) {}
-
     HousingRecord(const std::string& month, const std::string& town, const std::string& flatType,
         const std::string& block, const std::string& streetName, const std::string& storeyRange,
         int floorAreaSqm, const std::string& flatModel, int leaseCommenceDate,
@@ -39,7 +26,6 @@ struct HousingRecord {
         : month(month), town(town), flatType(flatType), block(block), streetName(streetName),
         storeyRange(storeyRange), floorAreaSqm(floorAreaSqm), flatModel(flatModel),
         leaseCommenceDate(leaseCommenceDate), remainingLease(remainingLease), resalePrice(resalePrice) {}
-
 
     static int safe_parse_int(const std::string& val) {
         try {
@@ -56,13 +42,13 @@ struct ListNode {
     ListNode* next;
 
     ListNode(const HousingRecord& rec) : data(rec), next(nullptr) {}
+};
 
-    ListNode(const std::string& month, const std::string& town, const std::string& flatType,
-        const std::string& block, const std::string& streetName, const std::string& storeyRange,
-        int floorAreaSqm, const std::string& flatModel, int leaseCommenceDate,
-        const std::string& remainingLease, int resalePrice)
-        : data(month, town, flatType, block, streetName, storeyRange, floorAreaSqm, flatModel,
-            leaseCommenceDate, remainingLease, resalePrice), next(nullptr) {}
+struct TreeNode {
+    int value;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int val) : value(val), left(nullptr), right(nullptr) {}
 };
 
 class HousingList {
@@ -115,16 +101,34 @@ public:
         }
     }
 
+        std::string line;
+        std::getline(file, line); // Skip header
 
+        while (std::getline(file, line)) {
+            std::stringstream ss(line);
+            std::string month, town, flatType, block, streetName, storeyRange, floorAreaSqm, flatModel, leaseCommenceDate, remainingLease, resalePrice;
 
-    //void printList(const char* label, ListNode* head) {
-    //    std::cout << label << ": ";
-    //    ListNode* temp = head;
-    //    while (temp != nullptr) {
-    //        std::cout << temp->data.block << "->"; // Adjust according to your data structure
-    //        temp = temp->next;
-    //    }
-    //}
+            std::getline(ss, month, ',');
+            std::getline(ss, town, ',');
+            std::getline(ss, flatType, ',');
+            std::getline(ss, block, ',');
+            std::getline(ss, streetName, ',');
+            std::getline(ss, storeyRange, ',');
+            std::getline(ss, floorAreaSqm, ',');
+            std::getline(ss, flatModel, ',');
+            std::getline(ss, leaseCommenceDate, ',');
+            std::getline(ss, remainingLease, ',');
+            std::getline(ss, resalePrice, ',');
+
+            HousingRecord record(month, town, flatType, block, streetName, storeyRange,
+                HousingRecord::safe_parse_int(floorAreaSqm), flatModel,
+                HousingRecord::safe_parse_int(leaseCommenceDate), remainingLease,
+                HousingRecord::safe_parse_int(resalePrice));
+
+            append(record);
+        }
+        file.close();
+    }
 
     ListNode* mergeSort(ListNode* head, std::function<bool(const HousingRecord&, const HousingRecord&)> compare) {
         if (!head || !head->next) {
