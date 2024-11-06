@@ -89,6 +89,22 @@ public:
     }
 
     void display() const {
+
+        std::cout << std::left;
+        std::cout << std::setw(10) << "Month"
+            << std::setw(12) << "Town"
+            << std::setw(15) << "Flat Type"
+            << std::setw(6) << "Block"
+            << std::setw(20) << "Street Name"
+            << std::setw(15) << "Storey Range"
+            << std::setw(14) << "Floor Area"
+            << std::setw(15) << "Flat Model"
+            << std::setw(12) << "Lease Start"
+            << std::setw(20) << "Remaining Lease"
+            << std::setw(16) << "Resale Price" << std::endl;
+        std::cout << std::setfill('-') << std::setw(165) << "" << std::endl;  // Draw a line under headers
+        std::cout << std::setfill(' ');
+
         ListNode* current = head;
         while (current != nullptr) {
             const auto& rec = current->data;
