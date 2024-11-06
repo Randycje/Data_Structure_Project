@@ -89,22 +89,6 @@ public:
     }
 
     void display() const {
-
-        std::cout << std::left;
-        std::cout << std::setw(10) << "Month"
-            << std::setw(12) << "Town"
-            << std::setw(15) << "Flat Type"
-            << std::setw(6) << "Block"
-            << std::setw(20) << "Street Name"
-            << std::setw(15) << "Storey Range"
-            << std::setw(14) << "Floor Area"
-            << std::setw(15) << "Flat Model"
-            << std::setw(12) << "Lease Start"
-            << std::setw(20) << "Remaining Lease"
-            << std::setw(16) << "Resale Price" << std::endl;
-        std::cout << std::setfill('-') << std::setw(165) << "" << std::endl;  // Draw a line under headers
-        std::cout << std::setfill(' ');
-
         ListNode* current = head;
         while (current != nullptr) {
             const auto& rec = current->data;
@@ -119,28 +103,6 @@ public:
                 << std::setw(12) << rec.leaseCommenceDate
                 << std::setw(20) << rec.remainingLease
                 << std::setw(16) << rec.resalePrice << std::endl;
-            current = current->next;
-        }
-    }
-
-    void display_column(int column) const {
-        ListNode* current = head;
-        while (current != nullptr) {
-            const auto& rec = current->data;
-            switch (column) {
-            case 1: std::cout << rec.month << std::endl; break;
-            case 2: std::cout << rec.town << std::endl; break;
-            case 3: std::cout << rec.flatType << std::endl; break;
-            case 4: std::cout << rec.block << std::endl; break;
-            case 5: std::cout << rec.streetName << std::endl; break;
-            case 6: std::cout << rec.storeyRange << std::endl; break;
-            case 7: std::cout << rec.floorAreaSqm << " sqm" << std::endl; break;
-            case 8: std::cout << rec.flatModel << std::endl; break;
-            case 9: std::cout << rec.leaseCommenceDate << std::endl; break;
-            case 10: std::cout << rec.remainingLease << std::endl; break;
-            case 11: std::cout << rec.resalePrice << std::endl; break;
-            default: std::cout << "Invalid column choice." << std::endl; break;
-            }
             current = current->next;
         }
     }
@@ -229,5 +191,4 @@ public:
         return dummy.next; // Return the merged list, skipping the dummy node
     }
 };
-
 #endif

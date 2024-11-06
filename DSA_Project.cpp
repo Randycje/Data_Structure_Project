@@ -1,48 +1,9 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include "json.hpp" // Include this header for JSON handling (https://github.com/nlohmann/json)
-
-#define CURL_STATICLIB
-#include <curl/curl.h>
-
-#pragma comment(lib, "wldap32.lib")
-#pragma comment(lib, "crypt32.lib")
-#pragma comment(lib, "Ws2_32.lib")
-#pragma comment(lib, "Normaliz.lib")
-#pragma comment(lib, "advapi32.lib")
 
 #include "DSA_Project.h"
 #include "Sort.h"
-
-static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* data) {
-    size_t newLength = size * nmemb;
-    data->append((char*)contents, newLength);
-    return newLength;
-}
-
-void fetch_data(const std::string& full_url, HousingList& records) {
-    CURL* curl = curl_easy_init();
-    if (curl) {
-        std::string readBuffer;
-        curl_easy_setopt(curl, CURLOPT_URL, full_url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        CURLcode res = curl_easy_perform(curl);
-
-        if (res == CURLE_OK) {
-            auto json = nlohmann::json::parse(readBuffer);
-            for (const auto& item : json["result"]["records"]) {
-                records.append(HousingRecord(item));
-            }
-        }
-        else {
-            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
-        }
-
-        curl_easy_cleanup(curl);
-    }
-}
 
 int main() {
     HousingList records;
