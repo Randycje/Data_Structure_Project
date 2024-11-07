@@ -22,7 +22,7 @@ int main() {
     while (true) {
         records.display();
 
-        std::cout << "\nChoose an action:\n1. Sort\n2. Search\n3. Save current list as CSV\n4. Export DOT file for Graphviz\n5. Reset Graph\n6. Exit\nEnter choice: ";
+        std::cout << "\nChoose an action:\n1. Sort\n2. Search\n3. Save current list as CSV\n4. Display current list in a Graph\n5. Reset Graph\n6. Exit\nEnter choice: ";
         std::cin >> action;
 
         // Flush the newline character left in the input buffer
@@ -81,7 +81,7 @@ int main() {
             break;
         }
         case '4': {
-            std::cout << "Save current list as DOT file to display in Graphviz? (yes or no)\n";
+            std::cout << "Display current list in a Graph? (yes or no) *gnuplot must be installed\n";
             std::string choice;
             std::cin >> choice;
             if (choice == "yes") {
@@ -90,9 +90,9 @@ int main() {
                 std::string choice;
                 std::cin >> choice;
                 if (choice == "1") {
-                    std::cout << "Exporting DOT File for Graphviz\n";
-                    PlotGraph::generateGraph(records, "Town", "ResalePrice", "Graph");
-                    std::cout << "Exporting done!\n";
+                    std::cout << "Rendering Graph in gnuplot\n";
+                    PlotGraph::plotResalePricesByTown(records);
+                    std::cout << "Visualising!\n";
                 }
             }
             else {

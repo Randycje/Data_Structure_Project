@@ -8,6 +8,6 @@
 
 class PlotGraph {
 public:
-    static void generateGraph(const HousingList& list, const std::string& xAttr, const std::string& yAttr, const std::string& filenam);
+    static void plotResalePricesByTown(const HousingList& records);
 };
 #endif

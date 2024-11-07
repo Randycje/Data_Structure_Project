@@ -1,70 +1,91 @@
 #include "PlotGraph.h"
 #include "DSA_Project.h"
-#include <fstream>
-#include <string>
-#include <cstdlib>
-#include <filesystem>
 #include <iostream>
-#include <vector>
+#include <fstream>
 #include <map>
-#include <string>
+#include <vector>
+#include <cstdio>
 
-// Mock-up function to get attribute value by name
-std::string getAttributeValue(const HousingRecord& record, const std::string& attrName) {
-    // This should be replaced by actual logic to retrieve attributes by name
-    if (attrName == "Month") return record.month;
-    if (attrName == "Town") return record.town;
-    if (attrName == "FlatType") return record.flatType;
-    if (attrName == "Block") return record.block;
-    if (attrName == "StreetName") return record.streetName;
-    if (attrName == "StoreyRange") return record.storeyRange;
-    if (attrName == "FloorAreaSqm") return std::to_string(record.floorAreaSqm);
-    if (attrName == "FlatModel") return record.flatModel;
-    if (attrName == "LeaseCommenceDate") return std::to_string(record.leaseCommenceDate);
-    if (attrName == "RemainingLease") return record.remainingLease;
-    if (attrName == "ResalePrice") return std::to_string(record.resalePrice);
-    return "";
-}
 
-void PlotGraph::generateGraph(const HousingList& list, const std::string& xAttr, const std::string& yAttr, const std::string& filename) {
-    std::ofstream file(filename);
-    if (!file) {
-        std::cerr << "Error: Could not open file '" << filename << "' for writing." << std::endl;
+#ifdef _WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
+
+void PlotGraph::plotResalePricesByTown(const HousingList& records) {
+    // Step 1: Aggregate resale prices by town
+    std::map<std::string, std::vector<int>> townPrices;
+    ListNode* current = records.head;
+
+    while (current != nullptr) {
+        townPrices[current->data.town].push_back(current->data.resalePrice);
+        current = current->next;
+    }
+
+    // Step 2: Calculate average resale price for each town and write to file
+    std::ofstream dataFile("plot_data.txt");
+
+    if (!dataFile.is_open()) {
+        std::cerr << "Error: Could not create data files for plotting." << std::endl;
         return;
     }
 
-    file << "digraph HousingList {" << std::endl;
-    file << "  rankdir=LR;" << std::endl;
-    file << "  node [shape=circle, style=filled, fillcolor=lightgrey, fontcolor=black];" << std::endl;
-    file << "  edge [color=red, penwidth=2.0];" << std::endl;
+    std::map<int, std::string> indexToTown;
+    int index = 1;
+    for (const auto& pair : townPrices) {
+        const std::string& town = pair.first;
+        const std::vector<int>& prices = pair.second;
 
-    ListNode* current = list.head;
-    int index = 0;
-    std::string previousNode;
-
-    while (current != nullptr) {
-        std::string xValue = getAttributeValue(current->data, xAttr);
-        std::string yValue = getAttributeValue(current->data, yAttr);
-        std::string currentNode = "Node" + std::to_string(index);
-
-        file << "  " << currentNode << " [label=\"" << xValue << "\\n" << yValue << "\"];" << std::endl;
-
-        if (!previousNode.empty()) {
-            file << "  " << previousNode << " -> " << currentNode << ";" << std::endl;
+        // Calculate average resale price
+        int sum = 0;
+        for (int price : prices) {
+            sum += price;
         }
+        int averagePrice = sum / prices.size();
 
-        previousNode = currentNode;
-        current = current->next;
-        ++index;
+        // Write index and average price to data file
+        dataFile << index << " " << averagePrice << "\n";
+        indexToTown[index] = town;  // Store the mapping of index to town
+
+        index++;
+    }
+    dataFile.close();
+
+    // Step 3: Open a pipe to GNUplot
+    FILE* gnuplotPipe = popen("gnuplot -persistent", "w");
+    if (!gnuplotPipe) {
+        std::cerr << "Error: Could not open pipe to GNUplot." << std::endl;
+        return;
     }
 
-    file << "}" << std::endl;
-    file.close();
+    // Step 4: Send commands to GNUplot
+    fprintf(gnuplotPipe, "set title 'Average Resale Prices by Town'\n");
+    fprintf(gnuplotPipe, "set xlabel 'Town'\n");
+    fprintf(gnuplotPipe, "set ylabel 'Average Resale Price'\n");
 
-    std::string cmd = "dot -Tpng " + filename + " -o " + filename + ".png";
-    system(cmd.c_str());
+    // Load labels from the file and set them as custom x-axis ticks
+    fprintf(gnuplotPipe, "set xtics rotate by -45 font \",8\"\n");
+    fprintf(gnuplotPipe, "set xtics (");
+    bool first = true;
+    for (const auto& pair : indexToTown) {
+        if (!first) {
+            fprintf(gnuplotPipe, ", ");
+        }
+        fprintf(gnuplotPipe, "\"%s\" %d", pair.second.c_str(), pair.first);
+        first = false;
+    }
+    fprintf(gnuplotPipe, ")\n");
 
-    //ListNode* current = list.head;
+    // Plot data with lines and points
+    fprintf(gnuplotPipe, "plot 'plot_data.txt' with linespoints title 'Average Resale Price' lc rgb 'purple'\n");
+
+    // Close the pipe
+    pclose(gnuplotPipe);
+}
+
+
+
+//ListNode* current = list.head;
     //int nodeIndex = 0;
     //while (current != nullptr) {
     //    std::string xValue = getAttributeValue(current->data, xAttr);
@@ -83,4 +104,3 @@ void PlotGraph::generateGraph(const HousingList& list, const std::string& xAttr,
     //// Optionally, run Graphviz to generate the image
     //std::string cmd = "dot -Tpng " + filename + " -o " + filename + ".png";
     //system(cmd.c_str());
-}
