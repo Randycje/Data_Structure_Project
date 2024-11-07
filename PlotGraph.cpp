@@ -1,76 +1,86 @@
-//#include "PlotGraph.h"
-//
-//namespace plt = matplotlibcpp;
-//
-//// Function to display available columns
-//void GraphPlotter::displayColumns(const std::vector<std::vector<std::string>>& columns) const {
-//    std::cout << "Available columns to plot:" << std::endl;
-//    for (size_t i = 0; i < columns[0].size(); ++i) {
-//        std::cout << i + 1 << ". " << columns[0][i] << std::endl;
-//    }
-//}
-//
-//// Function to plot the graph
-//void GraphPlotter::plotGraph(const std::vector<std::vector<std::string>>& data, const std::vector<std::vector<std::string>>& columns, int xCol, int yCol, int plotType) const
-//{
-//    std::vector<double> xData;
-//    std::vector<double> yData;
-//
-//    // Extract the selected columns for plotting
-//    for (const auto& record : data) {
-//        xData.push_back(std::stod(record[xCol]));
-//        yData.push_back(std::stod(record[yCol]));
-//    }
-//
-//    char title[100];
-//    std::sprintf(title, "Plot of %s vs %s", columns[0][xCol].c_str(), columns[0][yCol].c_str());
-//
-//    // Plot the graph based on the selected plot type
-//    if (plotType == 1) {
-//        // Line Plot
-//        plt::plot(xData, yData, "r-");  // Red line
-//        plt::title(title);
-//    }
-//    else if (plotType == 2) {
-//        // Scatter Plot
-//        plt::scatter(xData, yData, 10.0);  // Point size of 10
-//        plt::title(title);
-//    }
-//    else if (plotType == 3) {
-//        // Bar Plot
-//        plt::bar(xData, yData);
-//        plt::title(title);
-//
-//        // Set labels for axes
-//        plt::xlabel(columns[0][xCol]);
-//        plt::ylabel(columns[0][yCol]);
-//        plt::show();
-//    }
-//}
-//
-//// Function to get the user's input for columns and plot type
-//void GraphPlotter::getUserInput(const std::vector<std::vector<std::string>>& columns,
-//    const std::vector<std::vector<std::string>>& data) const {
-//    int xCol, yCol, plotType;
-//
-//    // Ask user to choose the columns
-//    std::cout << "Enter the column number for the X axis: ";
-//    std::cin >> xCol;
-//    std::cout << "Enter the column number for the Y axis: ";
-//    std::cin >> yCol;
-//
-//    // Adjust indices (as users input starts from 1, but vector is 0-indexed)
-//    --xCol;
-//    --yCol;
-//
-//    // Ask for the plot type
-//    std::cout << "Select the type of graph:" << std::endl;
-//    std::cout << "1. Line Plot" << std::endl;
-//    std::cout << "2. Scatter Plot" << std::endl;
-//    std::cout << "3. Bar Plot" << std::endl;
-//    std::cout << "Enter the number for the desired plot type: ";
-//    std::cin >> plotType;
-//
-//    // Plot the selected graph
-//    plotGraph(data, columns, xCol, yCol, plotType);
-//}
+#include "PlotGraph.h"
+#include "DSA_Project.h"
+#include <fstream>
+#include <string>
+#include <cstdlib>
+#include <filesystem>
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+
+// Mock-up function to get attribute value by name
+std::string getAttributeValue(const HousingRecord& record, const std::string& attrName) {
+    // This should be replaced by actual logic to retrieve attributes by name
+    if (attrName == "Month") return record.month;
+    if (attrName == "Town") return record.town;
+    if (attrName == "FlatType") return record.flatType;
+    if (attrName == "Block") return record.block;
+    if (attrName == "StreetName") return record.streetName;
+    if (attrName == "StoreyRange") return record.storeyRange;
+    if (attrName == "FloorAreaSqm") return std::to_string(record.floorAreaSqm);
+    if (attrName == "FlatModel") return record.flatModel;
+    if (attrName == "LeaseCommenceDate") return std::to_string(record.leaseCommenceDate);
+    if (attrName == "RemainingLease") return record.remainingLease;
+    if (attrName == "ResalePrice") return std::to_string(record.resalePrice);
+    return "";
+}
+
+void PlotGraph::generateGraph(const HousingList& list, const std::string& xAttr, const std::string& yAttr, const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file) {
+        std::cerr << "Error: Could not open file '" << filename << "' for writing." << std::endl;
+        return;
+    }
+
+    file << "digraph HousingList {" << std::endl;
+    file << "  rankdir=LR;" << std::endl;
+    file << "  node [shape=circle, style=filled, fillcolor=lightgrey, fontcolor=black];" << std::endl;
+    file << "  edge [color=red, penwidth=2.0];" << std::endl;
+
+    ListNode* current = list.head;
+    int index = 0;
+    std::string previousNode;
+
+    while (current != nullptr) {
+        std::string xValue = getAttributeValue(current->data, xAttr);
+        std::string yValue = getAttributeValue(current->data, yAttr);
+        std::string currentNode = "Node" + std::to_string(index);
+
+        file << "  " << currentNode << " [label=\"" << xValue << "\\n" << yValue << "\"];" << std::endl;
+
+        if (!previousNode.empty()) {
+            file << "  " << previousNode << " -> " << currentNode << ";" << std::endl;
+        }
+
+        previousNode = currentNode;
+        current = current->next;
+        ++index;
+    }
+
+    file << "}" << std::endl;
+    file.close();
+
+    std::string cmd = "dot -Tpng " + filename + " -o " + filename + ".png";
+    system(cmd.c_str());
+
+    //ListNode* current = list.head;
+    //int nodeIndex = 0;
+    //while (current != nullptr) {
+    //    std::string xValue = getAttributeValue(current->data, xAttr);
+    //    std::string yValue = getAttributeValue(current->data, yAttr);
+    //    file << "  Node" << nodeIndex << " [label=\"" << xValue << "\\n" << yValue << "\"];" << std::endl;
+    //    if (current->next) {
+    //        file << "  Node" << nodeIndex << " -> Node" << (nodeIndex + 1) << ";" << std::endl;
+    //    }
+    //    current = current->next;
+    //    ++nodeIndex;
+    //}
+
+    //file << "}" << std::endl;
+    //file.close();
+
+    //// Optionally, run Graphviz to generate the image
+    //std::string cmd = "dot -Tpng " + filename + " -o " + filename + ".png";
+    //system(cmd.c_str());
+}
