@@ -12,7 +12,7 @@
 
 int main() {
     HousingList records;
-    std::string filename = "Dataset-2021.csv";
+    std::string filename = "Dataset.csv";
     records.readCSV(filename);
     HousingList backup;
     backup = records;
@@ -81,22 +81,47 @@ int main() {
             break;
         }
         case '4': {
-            std::cout << "Display current list in a Graph? (yes or no) *gnuplot must be installed\n";
+            std::cout << "What kind of graph do you want?\n";
+            std::cout << "1. Line Graph with Town and Resale\n2. Line Graph with Flat Type and Resale\n";
+            std::cout << "3. Line Graph with Remaining Lease and Resale\n4. Line Graph with Floor Area and Resale\n";
+            std::cout << "5. Line Graph with Street Name and Resale\n6. Line Graph with Lease Commencement and Resale\n";
+            std::cout << "7. Bar Graph with Floor Area and Flat Type\n8. In progress...\n";
             std::string choice;
             std::cin >> choice;
-            if (choice == "yes") {
-                std::cout << "What kind of graph do you want?\n";
-                std::cout << "1. Line Graph with Town and Resale\n";
-                std::string choice;
-                std::cin >> choice;
-                if (choice == "1") {
-                    std::cout << "Rendering Graph in gnuplot\n";
-                    PlotGraph::plotResalePricesByTown(records);
-                    std::cout << "Visualising!\n";
-                }
+            if (choice == "1") {
+                std::cout << "Rendering Graph in gnuplot\n";
+                PlotGraph::plotResalePricesByTown(records);
+                std::cout << "Visualising!\n";
             }
-            else {
-                std::cout << "No actions done!\n";
+            else if (choice == "2") {
+                std::cout << "Rendering Graph in gnuplot\n";
+                PlotGraph::plotResalePricesByFlatType(records);
+                std::cout << "Visualising!\n";
+            }
+            else if (choice == "3") {
+                std::cout << "Rendering Graph in gnuplot\n";
+                PlotGraph::plotResalePricesByRemainingLease(records);
+                std::cout << "Visualising!\n";
+            }
+            else if (choice == "4") {
+                std::cout << "Rendering Graph in gnuplot\n";
+                PlotGraph::plotResalePricesByFloorArea(records);
+                std::cout << "Visualising!\n";
+            }
+            else if (choice == "5") {
+                std::cout << "Rendering Graph in gnuplot\n";
+                PlotGraph::plotResalePricesByStreetName(records);
+                std::cout << "Visualising!\n";
+            }
+            else if (choice == "6") {
+                std::cout << "Rendering Graph in gnuplot\n";
+                PlotGraph::plotResalePricesByLeaseCommencementDate(records);
+                std::cout << "Visualising!\n";
+            }
+            else if (choice == "7") {
+                std::cout << "Rendering Graph in gnuplot\n";
+                PlotGraph::plotFloorAreaByFlatType(records);
+                std::cout << "Visualising!\n";
             }
             break;
         }
@@ -113,6 +138,5 @@ int main() {
             std::cout << "Invalid Option. Please choose again.\n";
         }
     }
-
     return 0;
 }
