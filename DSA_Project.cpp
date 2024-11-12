@@ -82,10 +82,10 @@ int main() {
         }
         case '4': {
             std::cout << "What kind of graph do you want?\n";
-            std::cout << "1. Line Graph with Town and Resale\n2. Line Graph with Flat Type and Resale\n";
-            std::cout << "3. Line Graph with Remaining Lease and Resale\n4. Line Graph with Floor Area and Resale\n";
+            std::cout << "1. Line Graph with Town and Resale\n2. Bar Graph with Flat Type and Resale\n";
+            std::cout << "3. Line Graph with Remaining Lease and Resale\n4. Bar Graph with Floor Area and Resale\n";
             std::cout << "5. Line Graph with Street Name and Resale\n6. Line Graph with Lease Commencement and Resale\n";
-            std::cout << "7. Bar Graph with Floor Area and Flat Type\n8. In progress...\n";
+            std::cout << "7. Line Graph with Storey Range and Resale\n";
             std::string choice;
             std::cin >> choice;
             if (choice == "1") {
@@ -120,7 +120,7 @@ int main() {
             }
             else if (choice == "7") {
                 std::cout << "Rendering Graph in gnuplot\n";
-                PlotGraph::plotFloorAreaByFlatType(records);
+                PlotGraph::plotStoreyByResale(records);
                 std::cout << "Visualising!\n";
             }
             break;

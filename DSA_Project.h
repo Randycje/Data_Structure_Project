@@ -81,7 +81,7 @@ public:
         int count = 0;
 
         // Display the header line
-        std::cout << std::setw(10) << "Month" << " | "
+        std::cout << std::setw(8) << "Month" << " | "
             << std::setw(12) << "Town" << " | "
             << std::setw(8) << "FlatType" << " | "
             << std::setw(6) << "Block" << " | "
@@ -94,7 +94,7 @@ public:
             << std::setw(16) << "ResalePrice" << std::endl;
 
         // Print a separator line to distinguish the headers from the data
-        std::cout << std::setw(10) << "----------" << " | "
+        std::cout << std::setw(8) << "--------" << " | "
             << std::setw(12) << "------------" << " | "
             << std::setw(8) << "--------" << " | "
             << std::setw(6) << "------" << " | "
@@ -104,7 +104,7 @@ public:
             << std::setw(18) << "------------------" << " | "
             << std::setw(18) << "------------------" << " | "
             << std::setw(20) << "--------------------" << " | "
-            << std::setw(16) << "----------------" << std::endl;
+            << std::setw(14) << "--------------" << std::endl;
 
         // Display the data for the first 6 records
         while (current != nullptr && count++ < 6) {
@@ -119,7 +119,7 @@ public:
                 << std::setw(18) << rec.flatModel << " | "
                 << std::setw(18) << rec.leaseCommenceDate << " | "
                 << std::setw(20) << rec.remainingLease << " | "
-                << std::setw(16) << rec.resalePrice << std::endl;
+                << std::setw(14) << rec.resalePrice << std::endl;
             current = current->next;
         }
     }

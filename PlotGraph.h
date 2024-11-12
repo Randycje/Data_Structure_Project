@@ -14,7 +14,6 @@ public:
     static void plotResalePricesByFloorArea(const HousingList& records);
     static void plotResalePricesByStreetName(const HousingList& records);
     static void plotResalePricesByLeaseCommencementDate(const HousingList& records);
-    static void plotFlatTypeByTown(const HousingList& records);
-    static void plotFloorAreaByFlatType(const HousingList& records);
+    static void plotStoreyByResale(const HousingList& records);
 };
 #endif

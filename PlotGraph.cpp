@@ -13,6 +13,104 @@
 #define pclose _pclose
 #endif
 
+//void PlotGraph::plotResalePricesHeatmap(const HousingList& records) {
+//    // Step 1: Aggregate resale prices by town
+//    std::map<std::string, std::vector<int>> townPrices;
+//    ListNode* current = records.head;
+//
+//    while (current != nullptr) {
+//        townPrices[current->data.town].push_back(current->data.resalePrice);
+//        current = current->next;
+//    }
+//
+//    // Step 2: Calculate average resale price for each town and store in a matrix format
+//    std::map<int, std::string> indexToTown;
+//    std::map<std::string, int> townToIndex;
+//    int index = 0;
+//
+//    for (const auto& pair : townPrices) {
+//        const std::string& town = pair.first;
+//        townToIndex[town] = index;
+//        indexToTown[index] = town;
+//        index++;
+//    }
+//
+//    // Initialize a square matrix with dimensions equal to the number of towns
+//    int numTowns = townPrices.size();
+//    std::vector<std::vector<int>> priceMatrix(numTowns, std::vector<int>(numTowns, 0));
+//
+//    for (const auto& pair : townPrices) {
+//        const std::string& town = pair.first;
+//        const std::vector<int>& prices = pair.second;
+//
+//        // Calculate average resale price
+//        int sum = 0;
+//        for (int price : prices) {
+//            sum += price;
+//        }
+//        int averagePrice = sum / prices.size();
+//
+//        // Place the average price in the matrix at the appropriate index
+//        int townIndex = townToIndex[town];
+//        priceMatrix[townIndex][townIndex] = averagePrice;  // Assign to diagonal as a basic heatmap setup
+//    }
+//
+//    // Step 3: Open a pipe to GNUplot
+//    FILE* gnuplotPipe = popen("gnuplot -persistent", "w");
+//    if (!gnuplotPipe) {
+//        std::cerr << "Error: Could not open pipe to GNUplot." << std::endl;
+//        return;
+//    }
+//
+//    // Step 4: Send commands to GNUplot
+//    fprintf(gnuplotPipe, "set title 'Average Resale Prices Heatmap by Town'\n");
+//    fprintf(gnuplotPipe, "set xlabel 'Town'\n");
+//    fprintf(gnuplotPipe, "set ylabel 'Town'\n");
+//    fprintf(gnuplotPipe, "set xtics rotate by -45 font \",8\"\n");
+//
+//    // Setting up labels for each town
+//    fprintf(gnuplotPipe, "set xtics (");
+//    bool first = true;
+//    for (const auto& pair : indexToTown) {
+//        if (!first) {
+//            fprintf(gnuplotPipe, ", ");
+//        }
+//        fprintf(gnuplotPipe, "\"%s\" %d", pair.second.c_str(), pair.first);
+//        first = false;
+//    }
+//    fprintf(gnuplotPipe, ")\n");
+//
+//    fprintf(gnuplotPipe, "set ytics (");
+//    first = true;
+//    for (const auto& pair : indexToTown) {
+//        if (!first) {
+//            fprintf(gnuplotPipe, ", ");
+//        }
+//        fprintf(gnuplotPipe, "\"%s\" %d", pair.second.c_str(), pair.first);
+//        first = false;
+//    }
+//    fprintf(gnuplotPipe, ")\n");
+//
+//    // Step 5: Plot the matrix as a heatmap
+//    fprintf(gnuplotPipe, "plot '-' matrix with image\n");
+//
+//    // Write the matrix data
+//    for (int i = 0; i < numTowns; ++i) {
+//        for (int j = 0; j < numTowns; ++j) {
+//            fprintf(gnuplotPipe, "%d ", priceMatrix[i][j]);
+//        }
+//        fprintf(gnuplotPipe, "\n");
+//    }
+//
+//    // End the matrix input for GNUplot
+//    fprintf(gnuplotPipe, "e\n");
+//    fprintf(gnuplotPipe, "e\n");
+//
+//    // Close the pipe
+//    pclose(gnuplotPipe);
+//}
+
+
 void PlotGraph::plotResalePricesByTown(const HousingList& records) {
     // Step 1: Aggregate resale prices by town
     std::map<std::string, std::vector<int>> townPrices;
@@ -133,6 +231,7 @@ void PlotGraph::plotResalePricesByFlatType(const HousingList& records) {
     fprintf(gnuplotPipe, "set title 'Average Resale Prices by Flat Type'\n");
     fprintf(gnuplotPipe, "set xlabel 'Flat Type'\n");
     fprintf(gnuplotPipe, "set ylabel 'Average Resale Price'\n");
+    fprintf(gnuplotPipe, "set key outside right top vertical Right noreverse enhanced autotitles columnhead nobox\n");
 
     // Load labels from the file and set them as custom x-axis ticks
     fprintf(gnuplotPipe, "set xtics rotate by -45 font \",8\"\n");
@@ -147,8 +246,8 @@ void PlotGraph::plotResalePricesByFlatType(const HousingList& records) {
     }
     fprintf(gnuplotPipe, ")\n");
 
-    // Plot data with lines and points
-    fprintf(gnuplotPipe, "plot 'plot_data.txt' with linespoints title 'Average Resale Price' lc rgb 'purple'\n");
+    // Plot data with boxes and set the xtics
+    fprintf(gnuplotPipe, "plot 'plot_data.txt' using 1:2 with boxes fillstyle solid 1.00 border lc rgb 'purple' title 'Average Resale Price'\n");
 
     // Close the pipe
     pclose(gnuplotPipe);
@@ -275,6 +374,7 @@ void PlotGraph::plotResalePricesByFloorArea(const HousingList& records) {
     fprintf(gnuplotPipe, "set title 'Average Resale Prices by Floor Area'\n");
     fprintf(gnuplotPipe, "set xlabel 'Floor Area (sqm)'\n");
     fprintf(gnuplotPipe, "set ylabel 'Average Resale Price'\n");
+    fprintf(gnuplotPipe, "set key outside right top vertical Right noreverse enhanced autotitles columnhead nobox\n");
 
     // Load labels from the file and set them as custom x-axis ticks
     fprintf(gnuplotPipe, "set xtics rotate by -45 font \",8\"\n");
@@ -289,8 +389,8 @@ void PlotGraph::plotResalePricesByFloorArea(const HousingList& records) {
     }
     fprintf(gnuplotPipe, ")\n");
 
-    // Plot data with lines and points
-    fprintf(gnuplotPipe, "plot 'plot_data.txt' with linespoints title 'Average Resale Price' lc rgb 'purple'\n");
+    // Plot data with boxes and set the xtics
+    fprintf(gnuplotPipe, "plot 'plot_data.txt' using 1:2 with boxes fillstyle solid 1.00 border lc rgb 'purple' title 'Average Resale Price'\n");
 
     // Close the pipe
     pclose(gnuplotPipe);
@@ -413,7 +513,7 @@ void PlotGraph::plotResalePricesByLeaseCommencementDate(const HousingList& recor
 
     // Step 4: Send commands to GNUplot
     fprintf(gnuplotPipe, "set title 'Average Resale Prices by Lease Commence Date'\n");
-    fprintf(gnuplotPipe, "set xlabel 'Lease Commence Date'\n");
+    fprintf(gnuplotPipe, "set xlabe 'Lease Commence Date'\n");
     fprintf(gnuplotPipe, "set ylabel 'Average Resale Price'\n");
 
     // Load labels from the file and set them as custom x-axis ticks
@@ -436,51 +536,40 @@ void PlotGraph::plotResalePricesByLeaseCommencementDate(const HousingList& recor
     pclose(gnuplotPipe);
 }
 
-void PlotGraph::plotFlatTypeByTown(const HousingList& records) {
-    return;
-}
-
-void PlotGraph::plotFloorAreaByFlatType(const HousingList& records) {
-    // Step 1: Define floor area ranges and aggregate data by flat type and range
-    std::map<std::string, std::map<int, int>> flatTypeAreaRanges;
+void PlotGraph::plotStoreyByResale(const HousingList& records) {
+    // Step 1: Aggregate resale prices by storeyRange
+    std::map<std::string, std::vector<int>> storeyPrices;
     ListNode* current = records.head;
 
     while (current != nullptr) {
-        const std::string& flatType = current->data.flatType;
-        int floorArea = current->data.floorAreaSqm;
-
-        // Determine the range (group by 50 sqm: 0-49, 50-99, etc.)
-        int areaRange = (floorArea / 50) * 50;
-
-        // Increment the count for the corresponding range for this flat type
-        flatTypeAreaRanges[flatType][areaRange]++;
+        storeyPrices[current->data.storeyRange].push_back(current->data.resalePrice);
         current = current->next;
     }
 
-    // Step 2: Write data for each flat type and floor area range to the file
+    // Step 2: Calculate average resale price for each storey range and write to file
     std::ofstream dataFile("plot_data.txt");
+
     if (!dataFile.is_open()) {
-        std::cerr << "Error: Could not create data file for plotting." << std::endl;
+        std::cerr << "Error: Could not create data files for plotting." << std::endl;
         return;
     }
 
-    std::map<int, std::string> indexToFlatType;
+    std::map<int, std::string> indexToStoreyRange;
     int index = 1;
-    for (const auto& flatTypePair : flatTypeAreaRanges) {
-        const std::string& flatType = flatTypePair.first;
-        const auto& areaRanges = flatTypePair.second;
+    for (const auto& pair : storeyPrices) {
+        const std::string& storeyRange = pair.first;
+        const std::vector<int>& prices = pair.second;
 
-        dataFile << index;
-        for (int rangeStart = 0; rangeStart <= 250; rangeStart += 50) {
-            if (areaRanges.count(rangeStart)) {
-                dataFile << " " << areaRanges.at(rangeStart);  // Count for this range
-            }
-            else {
-                dataFile << " 0";  // No data for this range
-            }
+        // Calculate average resale price
+        int sum = 0;
+        for (int price : prices) {
+            sum += price;
         }
-        dataFile << "\n";
-        indexToFlatType[index] = flatType;  // Store the mapping of index to flat type
+        int averagePrice = sum / prices.size();
+
+        // Write index and average price to data file
+        dataFile << index << " " << averagePrice << "\n";
+        indexToStoreyRange[index] = storeyRange;  // Store the mapping of index to storey range
 
         index++;
     }
@@ -494,26 +583,15 @@ void PlotGraph::plotFloorAreaByFlatType(const HousingList& records) {
     }
 
     // Step 4: Send commands to GNUplot
-    fprintf(gnuplotPipe, "set title 'Count of Records by Flat Type and Floor Area Range'\n");
-    fprintf(gnuplotPipe, "set xlabel 'Flat Type'\n");
-    fprintf(gnuplotPipe, "set ylabel 'Floor Area Range (sqm)'\n");
-
-    // Set y-axis as categorical range for floor area, including 200-249 range
-    fprintf(gnuplotPipe, "set ytics ('0-49' 25, '50-99' 75, '100-149' 125, '150-199' 175, '200-249' 225)\n");
-    fprintf(gnuplotPipe, "set yrange [0:250]\n");
-
-    // Set style for bar graph (boxes)
-    fprintf(gnuplotPipe, "set boxwidth 0.9 relative\n");
-    fprintf(gnuplotPipe, "set style fill solid 1.0\n");
-
-    // Position the legend outside the plot area (right and outside)
-    fprintf(gnuplotPipe, "set key outside right top vertical\n");
+    fprintf(gnuplotPipe, "set title 'Average Resale Prices by Storey Range'\n");
+    fprintf(gnuplotPipe, "set xlabel 'Storey Range'\n");
+    fprintf(gnuplotPipe, "set ylabel 'Average Resale Price'\n");
 
     // Load labels from the file and set them as custom x-axis ticks
     fprintf(gnuplotPipe, "set xtics rotate by -45 font \",8\"\n");
     fprintf(gnuplotPipe, "set xtics (");
     bool first = true;
-    for (const auto& pair : indexToFlatType) {
+    for (const auto& pair : indexToStoreyRange) {
         if (!first) {
             fprintf(gnuplotPipe, ", ");
         }
@@ -522,23 +600,14 @@ void PlotGraph::plotFloorAreaByFlatType(const HousingList& records) {
     }
     fprintf(gnuplotPipe, ")\n");
 
-    // Plot data by range using boxes for bar graph
-    fprintf(gnuplotPipe, "plot ");
-    bool firstPlot = true;
-    int column = 2; // Data for each floor area range starts from the 2nd column in the file
-    for (int rangeStart = 0; rangeStart <= 250; rangeStart += 50) {
-        if (!firstPlot) {
-            fprintf(gnuplotPipe, ", ");
-        }
-        fprintf(gnuplotPipe, "'plot_data.txt' using 1:%d with boxes title '%d-%d sqm'", column, rangeStart, rangeStart + 49);
-        column++;
-        firstPlot = false;
-    }
-    fprintf(gnuplotPipe, "\n");
+    // Plot data with lines and points
+    fprintf(gnuplotPipe, "plot 'plot_data.txt' with linespoints title 'Average Resale Price' lc rgb 'purple'\n");
 
     // Close the pipe
     pclose(gnuplotPipe);
 }
+
+
 
 
 
