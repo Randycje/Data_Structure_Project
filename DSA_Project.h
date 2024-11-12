@@ -81,45 +81,45 @@ public:
         int count = 0;
 
         // Display the header line
-        std::cout << std::setw(8) << "Month" << " | "
+        std::cout << std::setw(7) << "Month" << " | "
             << std::setw(12) << "Town" << " | "
-            << std::setw(8) << "FlatType" << " | "
+            << std::setw(9) << "FlatType" << " | "
             << std::setw(6) << "Block" << " | "
             << std::setw(20) << "StreetName" << " | "
             << std::setw(15) << "StoreyRange" << " | "
             << std::setw(14) << "FloorAreaSqm" << " | "
-            << std::setw(18) << "FlatModel" << " | "
+            << std::setw(14) << "FlatModel" << " | "
             << std::setw(18) << "LeaseCommenceDate" << " | "
             << std::setw(20) << "RemainingLease" << " | "
-            << std::setw(16) << "ResalePrice" << std::endl;
+            << std::setw(12) << "ResalePrice" << std::endl;
 
         // Print a separator line to distinguish the headers from the data
-        std::cout << std::setw(8) << "--------" << " | "
+        std::cout << std::setw(7) << "-------" << " | "
             << std::setw(12) << "------------" << " | "
-            << std::setw(8) << "--------" << " | "
+            << std::setw(9) << "---------" << " | "
             << std::setw(6) << "------" << " | "
             << std::setw(20) << "--------------------" << " | "
             << std::setw(15) << "---------------" << " | "
             << std::setw(14) << "--------------" << " | "
-            << std::setw(18) << "------------------" << " | "
+            << std::setw(14) << "--------------" << " | "
             << std::setw(18) << "------------------" << " | "
             << std::setw(20) << "--------------------" << " | "
-            << std::setw(14) << "--------------" << std::endl;
+            << std::setw(12) << "-----------" << std::endl;
 
         // Display the data for the first 6 records
         while (current != nullptr && count++ < 6) {
             const auto& rec = current->data;
-            std::cout << std::setw(10) << rec.month << " | "
+            std::cout << std::setw(7) << rec.month << " | "
                 << std::setw(12) << rec.town << " | "
-                << std::setw(8) << rec.flatType << " | "
+                << std::setw(9) << rec.flatType << " | "
                 << std::setw(6) << rec.block << " | "
                 << std::setw(20) << rec.streetName << " | "
                 << std::setw(15) << rec.storeyRange << " | "
                 << std::setw(14) << rec.floorAreaSqm << " | "
-                << std::setw(18) << rec.flatModel << " | "
+                << std::setw(14) << rec.flatModel << " | "
                 << std::setw(18) << rec.leaseCommenceDate << " | "
                 << std::setw(20) << rec.remainingLease << " | "
-                << std::setw(14) << rec.resalePrice << std::endl;
+                << std::setw(12) << rec.resalePrice << std::endl;
             current = current->next;
         }
     }
