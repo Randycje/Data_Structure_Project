@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
-#include <iomanip>
+#include <sstream>
 #include <limits>
 #include <cctype>
+#include <algorithm>
 
 #include "DSA_Project.h"
 #include "Sort.h"
@@ -11,129 +12,215 @@
 #include "PlotGraph.h"
 
 int main() {
-    HousingList records;
-    std::string filename = "Dataset-2021.csv";
-    records.readCSV(filename);
-    HousingList backup;
-    backup = records;
+    HousingList records; // Initialize a HousingList object to store housing records
+    std::string filename = "Dataset.csv"; // Specify the filename of the CSV file containing the housing data
+    records.readCSV(filename); // reading the excel file, and populates `records` with the data
+    HousingList backup = records;  // Backup to revert any changes
 
-    char action = '1';  // Initialize as '1' to enter the loop
-
-    while (true) {
-        records.display();
+    std::string input;
+    while (true) { // infinite loop to keep the program running till the user exits
+        records.display(); // displaying the record
 
         std::cout << "\nChoose an action:\n1. Sort\n2. Search\n3. Save current list as CSV\n4. Display current list in a Graph\n5. Reset Graph\n6. Exit\nEnter choice: ";
-        std::cin >> action;
+        std::getline(std::cin, input);
 
-        // Flush the newline character left in the input buffer
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        int action = 0;
+        std::stringstream actionStream(input);  
+        // Input Validation
+        if (!(actionStream >> action) || !actionStream.eof() || action < 1 || action > 6) {
+            std::cout << "Invalid option. Please enter a number from 1 to 6.\n";
+            continue;
+        }
 
         switch (action) {
-        case '1': {
-            std::cout << "\nSelect the column to sort by:\n"
-                << "1. Month\n2. Town\n3. Flat Type\n4. Block\n5. Street Name\n6. Storey Range\n"
-                << "7. Floor Area (sqm)\n8. Flat Model\n9. Lease Commencement Date\n"
-                << "10. Remaining Lease\n11. Resale Price\n"
-                << "Enter the number of the column to sort by (1-11): ";
+        // Sorting function
+        case 1: {
+            std::string input;
             int choice;
-            std::cin >> choice;
-            std::cout << "\n";
+            while (true) {
+                std::cout << "\nSelect the column to sort by:\n"
+                    << "1. Month\n2. Town\n3. Flat Type\n4. Block\n5. Street Name\n6. Storey Range\n"
+                    << "7. Floor Area (sqm)\n8. Flat Model\n9. Lease Commencement Date\n"
+                    << "10. Remaining Lease\n11. Resale Price\n12. Go Back\n"
+                    << "Enter the number of the column to sort by (1-12): ";
+                std::getline(std::cin, input);
+                std::stringstream choiceStream(input);
+                if (choiceStream >> choice && choiceStream.eof() && choice >= 1 && choice <= 12) {
+                    break; // Valid input
+                }
+                std::cout << "Invalid input, please try again using numbers 1 to 12.\n";
+            }
+            if (choice == 12) {
+                std::cout << "Returning to main menu...\n";
+                break;
+            }
             records = SortFunction::sortRecords(records, choice);
             break;
         }
-        case '2': {
-            std::cout << "\nSelect the column you want to search by:\n"
-                << "1. Month\n2. Town\n3. Flat Type\n8. Flat Model\n10. Remaining Lease\n11. Resale Price\n"
-                << "Enter the number of the column to search from: ";
-            int choice;
-            std::cin >> choice;
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Enter the keyword to search (case sensitive): ";
+
+        // Searching function
+        case 2: {
             std::string input;
-            std::getline(std::cin, input);
-            for (char& c : input) {
-                c = std::toupper(static_cast<unsigned char>(c)); // Ensure safe conversion to uppercase
+            int choice;
+            while (true) {
+                std::cout << "\nSelect the column you want to search by:\n"
+                    << "1. Month\n2. Town\n3. Flat Type\n8. Flat Model\n10. Remaining Lease\n11. Resale Price\n12. Go Back\n"
+                    << "Enter the number of the column to search from (1-12): ";
+                std::getline(std::cin, input);
+                std::stringstream choiceStream(input);
+                if (!(choiceStream >> choice) || !choiceStream.eof()) {
+                    std::cout << "Invalid input, please try again.\n";
+                    continue;
+                }
+                // Validate if the choice is one of the explicitly allowed options
+                if (choice == 1 || choice == 2 || choice == 3 || choice == 8 || choice == 10 || choice == 11 || choice == 12) {
+                    break; // Valid input
+                }
+                else {
+                    std::cout << "Invalid choice, please select a valid column number or '12' to go back.\n";
+                }
             }
-            HousingList searchedRecords = SearchFunction::searchRecords(records, choice, input);
+            if (choice == 12) {
+                std::cout << "Returning to main menu...\n";
+                break;
+            }
+
+            std::cout << "Enter the keyword to search: ";
+            std::string keyword;
+            std::getline(std::cin, keyword);
+            for (char& c : keyword) {
+                c = std::toupper(static_cast<unsigned char>(c)); // Convert input to uppercase
+            }
+            HousingList searchedRecords = SearchFunction::searchRecords(records, choice, keyword);
             searchedRecords.display();
             std::cout << "\nKeep new table? (yes or no): ";
-            std::string keep;
-            std::cin >> keep;
-            if (keep == "yes") {
+            while (true) {
+                std::getline(std::cin, input);
+                if (input == "yes" || input == "no") {
+                    break;  // Valid input
+                }
+                std::cout << "Invalid response. Please enter 'yes' or 'no': ";
+            }
+
+            if (input == "yes") {
                 records = searchedRecords;
             }
             else {
-                std::cout << "Nothing done\n";
+                std::cout << "Nothing done, returning to main menu.\n";
             }
             break;
         }
-        case '3': {
-            std::cout << "Save current list as CSV? (yes or no):";
+        // Exporting as CSV function
+        case 3: {
             std::string choice;
-            std::cin >> choice;
+            while (true) {
+                std::cout << "Save current list as CSV? (yes or no): ";
+                std::getline(std::cin, choice);
+                if (choice == "yes" || choice == "no" || choice == "back") {
+                    break;
+                }
+                else {
+                    std::cout << "Invalid input, please enter 'yes', 'no', or 'back' to return to the main menu.\n";
+                }
+            }
             if (choice == "yes") {
                 std::cout << "\nSaving...\n";
                 WriteToCSV::writeListToCSV(records, "ResaleData.csv");
+                std::cout << "Data saved successfully to 'ResaleData.csv'.\n";
+            }
+            else if (choice == "back") {
+                std::cout << "Returning to main menu...\n";
+                break;
             }
             else {
                 std::cout << "No actions done!\n";
             }
             break;
         }
-        case '4': {
-            std::cout << "What kind of graph do you want?\n";
-            std::cout << "1. Line Graph with Town and Resale\n2. Bar Graph with Flat Type and Resale\n";
-            std::cout << "3. Line Graph with Remaining Lease and Resale\n4. Bar Graph with Floor Area and Resale\n";
-            std::cout << "5. Line Graph with Street Name and Resale\n6. Line Graph with Lease Commencement and Resale\n";
-            std::cout << "7. Line Graph with Storey Range and Resale\n";
+        // Displaying Graph in Gnuplot function
+        case 4: {
             std::string choice;
-            std::cin >> choice;
-            if (choice == "1") {
-                std::cout << "Rendering Graph in gnuplot\n";
+            while (true) {
+                std::cout << "What kind of graph do you want?\n"
+                    << "1. Line Graph with Town and Resale\n2. Bar Graph with Flat Type and Resale\n"
+                    << "3. Line Graph with Remaining Lease and Resale\n4. Bar Graph with Floor Area and Resale\n"
+                    << "5. Line Graph with Street Name and Resale\n6. Line Graph with Lease Commencement and Resale\n"
+                    << "7. Line Graph with Storey Range and Resale\n"
+                    << "8. Go Back\n"
+                    << "Enter your choice (1-8): ";
+                std::getline(std::cin, choice);
+                std::stringstream graphStream(choice);
+                int graphChoice;
+                if (graphStream >> graphChoice && graphStream.eof()) {
+                    if (graphChoice >= 1 && graphChoice <= 8) {
+                        break; // Valid input
+                    }
+                }
+                std::cout << "Invalid choice, please select a number from 1 to 8.\n";
+            }
+            if (stoi(choice) == 8) {
+                std::cout << "Returning to previous menu...\n";
+                break; // Exit the switch without plotting any graph
+            }
+            std::cout << "Rendering Graph in gnuplot\n";
+            switch (stoi(choice)) {
+            case 1:
                 PlotGraph::plotResalePricesByTown(records);
-                std::cout << "Visualising!\n";
-            }
-            else if (choice == "2") {
-                std::cout << "Rendering Graph in gnuplot\n";
+                break;
+            case 2:
                 PlotGraph::plotResalePricesByFlatType(records);
-                std::cout << "Visualising!\n";
-            }
-            else if (choice == "3") {
-                std::cout << "Rendering Graph in gnuplot\n";
+                break;
+            case 3:
                 PlotGraph::plotResalePricesByRemainingLease(records);
-                std::cout << "Visualising!\n";
-            }
-            else if (choice == "4") {
-                std::cout << "Rendering Graph in gnuplot\n";
+                break;
+            case 4:
                 PlotGraph::plotResalePricesByFloorArea(records);
-                std::cout << "Visualising!\n";
-            }
-            else if (choice == "5") {
-                std::cout << "Rendering Graph in gnuplot\n";
+                break;
+            case 5:
                 PlotGraph::plotResalePricesByStreetName(records);
-                std::cout << "Visualising!\n";
-            }
-            else if (choice == "6") {
-                std::cout << "Rendering Graph in gnuplot\n";
+                break;
+            case 6:
                 PlotGraph::plotResalePricesByLeaseCommencementDate(records);
-                std::cout << "Visualising!\n";
-            }
-            else if (choice == "7") {
-                std::cout << "Rendering Graph in gnuplot\n";
+                break;
+            case 7:
                 PlotGraph::plotStoreyByResale(records);
-                std::cout << "Visualising!\n";
+                break;
+            default:
+                std::cout << "Invalid choice. No graph will be displayed.\n";
+            }
+            std::cout << "Visualising!\n";
+            break;
+        }
+        // Resetting list function
+        case 5: {
+            std::string confirmation;
+            while (true) {
+                std::cout << "Are you sure you want to revert to the original dataset? This action cannot be undone.\n";
+                std::cout << "Type 'yes' to confirm or 'no' to cancel: ";
+                std::getline(std::cin, confirmation);
+                // Convert the user input to lowercase for consistent comparison (optional)
+                std::transform(confirmation.begin(), confirmation.end(), confirmation.begin(),
+                    [](unsigned char c) { return std::tolower(c); });
+
+                if (confirmation == "yes") {
+                    records = backup; // Revert the dataset to the backup
+                    std::cout << "Dataset has been reverted to the original state.\n";
+                    break; // Break the loop after action confirmed
+                }
+                else if (confirmation == "no") {
+                    std::cout << "Revert cancelled. Returning to main menu.\n";
+                    break; // Break the loop after cancelation
+                }
+                else {
+                    std::cout << "Invalid input. Please type 'yes' to confirm or 'no' to cancel.\n"; // Reprompt if input is invalid
+                }
             }
             break;
         }
-        case '5': {
-            records = backup;
-            std::cout << "Dataset has been reverted\n";
-            break;
-        }
-        case '6': {
+        // Exiting the program
+        case 6:
             std::cout << "Exiting...\n";
             return 0;
-        }
         default:
             std::cout << "Invalid Option. Please choose again.\n";
         }

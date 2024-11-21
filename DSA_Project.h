@@ -8,6 +8,7 @@
 #include <string>
 #include <functional>
 
+// Represents a single housing record with details such as month, town, type of flat, etc.
 struct HousingRecord {
     std::string month;
     std::string town;
@@ -21,6 +22,7 @@ struct HousingRecord {
     std::string remainingLease;
     int resalePrice;
 
+    // Constructor to initialize the HousingRecord with given parameters
     HousingRecord(const std::string& month, const std::string& town, const std::string& flatType,
         const std::string& block, const std::string& streetName, const std::string& storeyRange,
         int floorAreaSqm, const std::string& flatModel, int leaseCommenceDate,
@@ -29,6 +31,7 @@ struct HousingRecord {
         storeyRange(storeyRange), floorAreaSqm(floorAreaSqm), flatModel(flatModel),
         leaseCommenceDate(leaseCommenceDate), remainingLease(remainingLease), resalePrice(resalePrice) {}
 
+    // Safely converts a string to an integer, returning 0 if conversion fails
     static int safe_parse_int(const std::string& val) {
         try {
             return std::stoi(val);
@@ -39,40 +42,48 @@ struct HousingRecord {
     }
 };
 
+// Node in a linked list that stores a HousingRecord and a pointer to the next node
 struct ListNode {
     HousingRecord data;
     ListNode* next;
-
+    // Constructor that initializes the node with a HousingRecord
     ListNode(const HousingRecord& rec) : data(rec), next(nullptr) {}
 };
 
+// Node in a binary tree that stores a HousingRecord and pointers to child nodes
 struct TreeNode {
     HousingRecord data;
     TreeNode* left;
     TreeNode* right;
+
+    // Constructor that initializes the tree node with a HousingRecord
     TreeNode(const HousingRecord& rec) : data(rec), left(nullptr), right(nullptr) {}
 };
 
+// A singly linked list class to manage a list of HousingRecords
 class HousingList {
 public:
-    ListNode* head;
+    ListNode* head; // Points to the first node in the list
 
+    // Constructor initializes the list as empty
     HousingList() : head(nullptr) {}
 
+    // Destructor cleans up all nodes to free memory
     ~HousingList() {
         clear();
     }
 
+    // Appends a new record to the end of the list
     void append(const HousingRecord& rec) {
         if (head == nullptr) {
-            head = new ListNode(rec);
+            head = new ListNode(rec); // If list is empty, create the first node
         }
         else {
-            ListNode* current = head;
+            ListNode* current = head; // Start at the head of the list
             while (current->next != nullptr) {
-                current = current->next;
+                current = current->next;  // Find the last node
             }
-            current->next = new ListNode(rec);
+            current->next = new ListNode(rec); // Append new node at the end
         }
     }
 
